@@ -21,6 +21,6 @@ public class ApiController {
     @RequestMapping("preview")
     public String getFilePreviewUrl(@RequestParam(required = true) String neid,
                                     @RequestParam(required = false, defaultValue = "745477") String nsid) {
-        return apiService.getFilePreviewUrl(neid,nsid);
+        return apiService.getFilePreviewUrl(neid, nsid);
     }
 }

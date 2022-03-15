@@ -1,5 +1,6 @@
 package me.cuiyijie.joyeasharelenovo.service;
 
+import me.cuiyijie.joyeasharelenovo.model.FileListResponse;
 import me.cuiyijie.joyeasharelenovo.model.PreviewResponse;
 import me.cuiyijie.joyeasharelenovo.model.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class ApiService {
 
     private final static String TOKEN_URL = "https://api.zbox.filez.com/v3/oauth/token";
     private final static String PREVIEW_URL = "https://api.zbox.filez.com/v3/api/preview/";
+    private final static String FILE_LIST_URL = "https://api.zbox.filez.com/v3/api/file";
 
     private String accessToken;
     private Long expiresAt;
@@ -58,6 +60,18 @@ public class ApiService {
         ResponseEntity<PreviewResponse> response = restTemplate.exchange(requestUrl, HttpMethod.GET, requestEntity, PreviewResponse.class);
         PreviewResponse previewResponse = response.getBody();
         return previewResponse.getPreviewUrl();
+    }
+
+    public FileListResponse getFileList(String path) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", String.format("bearer %s", getAccessToken()));
+        MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        map.add("path", path);
+        map.add("path_type", "ent");
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, Object>> param = new HttpEntity<>(map, headers);
+        ResponseEntity<FileListResponse> response = restTemplate.postForEntity(FILE_LIST_URL, param, FileListResponse.class);
+        return response.getBody();
     }
 
 }
