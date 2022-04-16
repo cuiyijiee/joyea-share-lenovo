@@ -1,9 +1,9 @@
-package me.cuiyijie.joyeasharelenovo.model;
+package me.cuiyijie.joyeasharelenovo.model.v3;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import me.cuiyijie.joyeasharelenovo.model.base.BaseResponse;
+import me.cuiyijie.joyeasharelenovo.model.v3.base.BaseResponse;
 
 /**
  * @Author: cuiyijie

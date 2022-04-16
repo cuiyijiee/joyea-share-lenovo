@@ -2,7 +2,7 @@ package me.cuiyijie.joyeasharelenovo.controller;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import me.cuiyijie.joyeasharelenovo.model.TransTranscodeVideoRequest;
+import me.cuiyijie.joyeasharelenovo.model.v3.TransTranscodeVideoRequest;
 import me.cuiyijie.joyeasharelenovo.service.TranscodeVideoService;
 import me.cuiyijie.trans.TransBasePageResponse;
 import me.cuiyijie.trans.TransBaseResponse;

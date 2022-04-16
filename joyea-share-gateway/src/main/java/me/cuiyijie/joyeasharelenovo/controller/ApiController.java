@@ -2,7 +2,7 @@ package me.cuiyijie.joyeasharelenovo.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.cuiyijie.joyeasharelenovo.model.RedirectPath;
-import me.cuiyijie.joyeasharelenovo.service.ApiService;
+import me.cuiyijie.joyeasharelenovo.service.OpenApiV3Service;
 import me.cuiyijie.joyeasharelenovo.service.RedirectPathService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mobile.device.Device;
@@ -20,7 +20,7 @@ import java.net.URLEncoder;
 public class ApiController {
 
     @Autowired
-    private ApiService apiService;
+    private OpenApiV3Service openApiV3Service;
 
     @Autowired
     private RedirectPathService redirectPathService;
@@ -28,14 +28,14 @@ public class ApiController {
     @ResponseBody
     @RequestMapping("token")
     public String getToken() {
-        return apiService.getAccessToken();
+        return openApiV3Service.getAccessToken();
     }
 
     @ResponseBody
     @RequestMapping("preview")
     public String getFilePreviewUrl(@RequestParam(required = true) String neid,
                                     @RequestParam(required = false, defaultValue = "745477") String nsid) {
-        return apiService.getFilePreviewUrl(neid, nsid);
+        return openApiV3Service.getFilePreviewUrl(neid, nsid);
     }
 
     @ResponseBody

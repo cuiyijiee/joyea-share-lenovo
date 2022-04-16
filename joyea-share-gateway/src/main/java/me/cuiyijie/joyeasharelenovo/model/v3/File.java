@@ -1,4 +1,4 @@
-package me.cuiyijie.joyeasharelenovo.model;
+package me.cuiyijie.joyeasharelenovo.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

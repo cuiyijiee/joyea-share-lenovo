@@ -3,23 +3,14 @@ package me.cuiyijie.joyeasharelenovo.xxljobhandler;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
+import me.cuiyijie.joyeasharelenovo.config.Constants;
 import me.cuiyijie.joyeasharelenovo.model.TranscodeVideo;
-import me.cuiyijie.joyeasharelenovo.service.ApiService;
+import me.cuiyijie.joyeasharelenovo.service.OpenApiV3Service;
 import me.cuiyijie.joyeasharelenovo.service.TranscodeVideoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * XxlJob开发示例（Bean模式）
@@ -37,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class SampleXxlJob {
 
     @Autowired
-    private ApiService apiService;
+    private OpenApiV3Service openApiV3Service;
     @Autowired
     private TranscodeVideoService transcodeVideoService;
 
@@ -53,7 +44,7 @@ public class SampleXxlJob {
             TranscodeVideo transcodeVideo = allVideo.get(index);
             XxlJobHelper.log("3.start " + index + " [" + transcodeVideo.getId() + "]：" + transcodeVideo.getFileName());
             try {
-                String previewUrl = apiService.getFilePreviewUrl(transcodeVideo.getNeid(), "745477");
+                String previewUrl = openApiV3Service.getFilePreviewUrl(transcodeVideo.getNeid(), Constants.DEFAULT_PATH_NSID);
                 transcodeVideo.setTransVideoUrl(previewUrl);
                 transcodeVideoService.updateTranscodeUrl(transcodeVideo.getId(), previewUrl);
                 XxlJobHelper.log("success: " + previewUrl);

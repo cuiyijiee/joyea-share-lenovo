@@ -1,8 +1,8 @@
-package me.cuiyijie.joyeasharelenovo.model;
+package me.cuiyijie.joyeasharelenovo.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import me.cuiyijie.joyeasharelenovo.model.base.BaseResponse;
+import me.cuiyijie.joyeasharelenovo.model.v3.base.BaseResponse;
 
 @Data
 public class PreviewResponse  extends BaseResponse {

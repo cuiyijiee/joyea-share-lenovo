@@ -1,9 +1,10 @@
 package me.cuiyijie.joyeasharelenovo.service;
 
-import me.cuiyijie.joyeasharelenovo.model.FileInfoResponse;
-import me.cuiyijie.joyeasharelenovo.model.FileListResponse;
-import me.cuiyijie.joyeasharelenovo.model.PreviewResponse;
-import me.cuiyijie.joyeasharelenovo.model.TokenResponse;
+import lombok.extern.slf4j.Slf4j;
+import me.cuiyijie.joyeasharelenovo.model.v3.FileInfoResponse;
+import me.cuiyijie.joyeasharelenovo.model.v3.FileListResponse;
+import me.cuiyijie.joyeasharelenovo.model.v3.PreviewResponse;
+import me.cuiyijie.joyeasharelenovo.model.v3.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -14,14 +15,15 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
 
+@Slf4j
 @Service
-public class ApiService {
+public class OpenApiV3Service {
 
-    @Value("${lenovo.api.client.id}")
+    @Value("${lenovo.api.v3.client.id}")
     private String clientId;
-    @Value("${lenovo.api.client.secret}")
+    @Value("${lenovo.api.v3.client.secret}")
     private String clientSecret;
-    @Value("${lenovo.api.slug}")
+    @Value("${lenovo.api.v3.slug}")
     private String userSlug;
 
     @Autowired
@@ -47,6 +49,7 @@ public class ApiService {
             ResponseEntity<TokenResponse> response = restTemplate.postForEntity(TOKEN_URL, param, TokenResponse.class);
             TokenResponse tokenResponse = response.getBody();
             accessToken = tokenResponse.getAccessToken();
+            log.info("获取到token：{}",accessToken);
             expiresAt = System.currentTimeMillis() + tokenResponse.getExpiresIn();
             return accessToken;
         }

@@ -3,7 +3,7 @@ package me.cuiyijie.joyeasharelenovo.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.cuiyijie.joyeasharelenovo.dao.TranscodeVideoDao;
-import me.cuiyijie.joyeasharelenovo.model.FileInfoResponse;
+import me.cuiyijie.joyeasharelenovo.model.v3.FileInfoResponse;
 import me.cuiyijie.joyeasharelenovo.model.TranscodeVideo;
 import me.cuiyijie.trans.TransBasePageResponse;
 import me.cuiyijie.trans.TransBaseResponse;
@@ -26,7 +26,7 @@ public class TranscodeVideoService {
     private TranscodeVideoDao transcodeVideoDao;
 
     @Autowired
-    private ApiService apiService;
+    private OpenApiV3Service openApiV3Service;
 
     public TranscodeVideo findByNeid(String neid) {
         return transcodeVideoDao.selectOne(new QueryWrapper<TranscodeVideo>().eq("neid", neid));
@@ -38,7 +38,7 @@ public class TranscodeVideoService {
         if (existedTranscodeVideo != null) {
             return TransBaseResponse.failed("该视频文件已经添加到转码列表中！");
         }
-        FileInfoResponse fileInfoResponse = apiService.getFileInfo(videoNeid, nsid);
+        FileInfoResponse fileInfoResponse = openApiV3Service.getFileInfo(videoNeid, nsid);
         if (fileInfoResponse != null || "0".equals(fileInfoResponse.getErrorCode())) {
             String fileName = FileUtil.getFileNameByPath(fileInfoResponse.getPath());
             TranscodeVideo transcodeVideo = new TranscodeVideo();
