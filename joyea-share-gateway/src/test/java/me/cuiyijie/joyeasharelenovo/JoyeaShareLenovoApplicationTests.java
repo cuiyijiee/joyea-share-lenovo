@@ -8,6 +8,7 @@ import me.cuiyijie.joyeasharelenovo.service.LeaderboardService;
 import me.cuiyijie.joyeasharelenovo.service.OpenApiV2Service;
 import me.cuiyijie.joyeasharelenovo.service.OpenApiV3Service;
 import me.cuiyijie.joyeasharelenovo.service.TranscodeVideoService;
+import me.cuiyijie.joyeasharelenovo.xxljobhandler.SampleXxlJob;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,13 +35,17 @@ class JoyeaShareLenovoApplicationTests {
 
     @Autowired
     private AlbumSrcDao albumSrcDao;
+    @Autowired
+    private SampleXxlJob sampleXxlJob;
 
     @Test
     void contextLoads() {
 
+        sampleXxlJob.syncLenovoDir();
 
-        AlbumSrc albumSrc = albumSrcDao.selectById(1785);
-        System.out.println(albumSrc);
+
+//        AlbumSrc albumSrc = albumSrcDao.selectById(1785);
+//        System.out.println(albumSrc);
         //        FileMetadataResponse response = openApiV2Service.getFileMetadata("/营销素材展示/STICK线/001、样品照片/002、保健品样品照片/001、保健品-颗粒剂");
 //        System.out.println(response);
 //

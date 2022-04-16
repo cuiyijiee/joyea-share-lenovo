@@ -1,4 +1,4 @@
-package me.cuiyijie.joyeasharelenovo.model;
+package me.cuiyijie.trans;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

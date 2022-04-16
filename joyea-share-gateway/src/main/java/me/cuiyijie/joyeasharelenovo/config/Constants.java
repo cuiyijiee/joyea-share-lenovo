@@ -12,5 +12,7 @@ public class Constants {
     public static String KEY_ALBUM_REF_RANK = "album_download_rank";
     public static String KEY_UPLOAD_RANK = "upload_rank";
 
+    public static String UPLOAD_TEMP_DIR = "素材库上传临时文件夹";
+
 
 }

@@ -4,13 +4,21 @@ import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import me.cuiyijie.joyeasharelenovo.config.Constants;
+import me.cuiyijie.joyeasharelenovo.enums.TranscodeVideoStatus;
+import me.cuiyijie.joyeasharelenovo.model.SrcDirectory;
 import me.cuiyijie.joyeasharelenovo.model.TranscodeVideo;
+import me.cuiyijie.joyeasharelenovo.model.enums.DirectoryType;
+import me.cuiyijie.joyeasharelenovo.model.v2.FileMetadataResponse;
+import me.cuiyijie.joyeasharelenovo.service.OpenApiV2Service;
 import me.cuiyijie.joyeasharelenovo.service.OpenApiV3Service;
+import me.cuiyijie.joyeasharelenovo.service.SrcDirService;
 import me.cuiyijie.joyeasharelenovo.service.TranscodeVideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * XxlJob开发示例（Bean模式）
@@ -31,26 +39,108 @@ public class SampleXxlJob {
     private OpenApiV3Service openApiV3Service;
     @Autowired
     private TranscodeVideoService transcodeVideoService;
+    @Autowired
+    private OpenApiV2Service openApiV2Service;
+    @Autowired
+    private SrcDirService srcDirService;
 
     /**
      * 1、简单任务示例（Bean模式）
      */
     @XxlJob("refreshAllVideoJob")
-    public void demoJobHandler() throws Exception {
+    public void refreshAllVideoJob() {
         XxlJobHelper.log("1.start update transcode task;");
-        List<TranscodeVideo> allVideo = transcodeVideoService.getAllTranscodeVideo();
+        List<TranscodeVideo> allVideo = transcodeVideoService.getAllTranscodeVideo(TranscodeVideoStatus.LOADED);
         XxlJobHelper.log("2.got transcode video count: " + allVideo.size());
         for (int index = 0; index < allVideo.size(); index++) {
             TranscodeVideo transcodeVideo = allVideo.get(index);
             XxlJobHelper.log("3.start " + index + " [" + transcodeVideo.getId() + "]：" + transcodeVideo.getFileName());
             try {
-                String previewUrl = openApiV3Service.getFilePreviewUrl(transcodeVideo.getNeid(), Constants.DEFAULT_PATH_NSID);
+                String previewUrl = openApiV3Service.getFilePreviewUrl(transcodeVideo.getNeid(), Constants.DEFAULT_PATH_NSID,false);
                 transcodeVideo.setTransVideoUrl(previewUrl);
                 transcodeVideoService.updateTranscodeUrl(transcodeVideo.getId(), previewUrl);
                 XxlJobHelper.log("success: " + previewUrl);
             } catch (Exception exception) {
                 log.error("update transcode video exist error: ", exception);
                 XxlJobHelper.log("【error】 with:" + exception.getMessage());
+            }
+        }
+    }
+
+    @XxlJob("refreshNewVideoJob")
+    public void refreshNewVideoJob() {
+        XxlJobHelper.log("1.start update transcode task;");
+        List<TranscodeVideo> allVideo = transcodeVideoService.getAllTranscodeVideo(TranscodeVideoStatus.NEW);
+        XxlJobHelper.log("2.got transcode video count: " + allVideo.size());
+        for (int index = 0; index < allVideo.size(); index++) {
+            TranscodeVideo transcodeVideo = allVideo.get(index);
+            XxlJobHelper.log("3.start " + index + " [" + transcodeVideo.getId() + "]：" + transcodeVideo.getFileName());
+            try {
+                String previewUrl = openApiV3Service.getFilePreviewUrl(transcodeVideo.getNeid(), Constants.DEFAULT_PATH_NSID,false);
+                transcodeVideo.setTransVideoUrl(previewUrl);
+                transcodeVideoService.updateTranscodeUrl(transcodeVideo.getId(), previewUrl);
+                XxlJobHelper.log("success: " + previewUrl);
+            } catch (Exception exception) {
+                log.error("update transcode video exist error: ", exception);
+                XxlJobHelper.log("【error】 with:" + exception.getMessage());
+            }
+        }
+    }
+
+    @XxlJob("syncLenovoDir")
+    public void syncLenovoDir() {
+        syncDir("/营销素材展示", null);
+    }
+
+    public void syncDir(String initPath, SrcDirectory parentDir) {
+        FileMetadataResponse fileMetadataResponse = openApiV2Service.getFileMetadata(initPath);
+        if (fileMetadataResponse != null) {
+            //遍历完成之后删除不存在的文件夹
+            SrcDirectory existDirectory = srcDirService.findByNeid(fileMetadataResponse.getNeid());
+            //如果不存在则新增
+            if (existDirectory == null) {
+                SrcDirectory srcDirectory = new SrcDirectory();
+                srcDirectory.setDirName(fileMetadataResponse.getFileName());
+                srcDirectory.setDirType(DirectoryType.LENOVO);
+                srcDirectory.setEnabled(true);
+                srcDirectory.setCreatedAt(LocalDateTime.now());
+                if (parentDir != null) {
+                    srcDirectory.setParentDirId(parentDir.getId());
+                } else {
+                    srcDirectory.setParentDirId(null);
+                }
+                srcDirectory.setNeid(fileMetadataResponse.getNeid());
+                existDirectory = srcDirService.insertNewDir(srcDirectory);
+            } else {
+                //更新文件夹名称
+                if (existDirectory.getDirName().equals(fileMetadataResponse.getFileName())) {
+                    srcDirService.updateFileName(existDirectory.getId(), fileMetadataResponse.getFileName());
+                }
+            }
+
+            if (fileMetadataResponse.getContent() != null) {
+                //本地存储的文件夹
+                List<SrcDirectory> existChildDirs = srcDirService.findChildById(existDirectory.getId());
+                //过滤掉网盘不存在的文件夹进行删除
+                List<String> onlineChildNeid = fileMetadataResponse.getContent().stream()
+                        .map(FileMetadataResponse::getNeid)
+                        .collect(Collectors.toList());
+                List<String> onlineNotExistChildDirId = existChildDirs.stream()
+                        .filter(srcDirectory -> !onlineChildNeid.contains(srcDirectory.getNeid()))
+                        .map(SrcDirectory::getId)
+                        .collect(Collectors.toList());
+                log.info("当前文件夹:{},要删除的文件夹ids: {}",fileMetadataResponse.getFileName(),onlineNotExistChildDirId);
+                if (onlineNotExistChildDirId.size() > 0) {
+                    srcDirService.deleteByIds(onlineNotExistChildDirId);
+                }
+
+                for (int index = 0; index < fileMetadataResponse.getContent().size(); index++) {
+                    FileMetadataResponse metadataResponse = fileMetadataResponse.getContent().get(index);
+                    if (metadataResponse.getIsDir()) {
+                        System.out.println("获取到目录：" + metadataResponse.getPath());
+                        syncDir(metadataResponse.getPath(), existDirectory);
+                    }
+                }
             }
         }
     }

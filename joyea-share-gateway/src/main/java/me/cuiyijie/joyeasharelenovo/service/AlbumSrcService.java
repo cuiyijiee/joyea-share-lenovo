@@ -12,8 +12,8 @@ public class AlbumSrcService {
     @Autowired
     private AlbumSrcDao albumSrcDao;
 
-    public Integer countByNeid(String neid){
-        return albumSrcDao.selectCount(new QueryWrapper<AlbumSrc>().eq("src_neid",neid));
+    public Long countByNeid(String neid){
+        return albumSrcDao.selectCount(new QueryWrapper<AlbumSrc>().eq("src_neid",neid)).longValue();
     }
 
 }

@@ -3,6 +3,7 @@ package me.cuiyijie.joyeasharelenovo.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.cuiyijie.joyeasharelenovo.dao.TranscodeVideoDao;
+import me.cuiyijie.joyeasharelenovo.enums.TranscodeVideoStatus;
 import me.cuiyijie.joyeasharelenovo.model.v3.FileInfoResponse;
 import me.cuiyijie.joyeasharelenovo.model.TranscodeVideo;
 import me.cuiyijie.trans.TransBasePageResponse;
@@ -64,8 +65,8 @@ public class TranscodeVideoService {
         return new TransBasePageResponse(result);
     }
 
-    public List<TranscodeVideo> getAllTranscodeVideo() {
-        return transcodeVideoDao.selectList(null);
+    public List<TranscodeVideo> getAllTranscodeVideo(TranscodeVideoStatus transcodeVideoStatus) {
+        return transcodeVideoDao.selectList(new QueryWrapper<TranscodeVideo>().eq("status",transcodeVideoStatus));
     }
 
     public void updateTranscodeUrl(String id, String previewUrl) {

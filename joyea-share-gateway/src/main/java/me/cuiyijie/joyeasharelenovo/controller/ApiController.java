@@ -1,7 +1,9 @@
 package me.cuiyijie.joyeasharelenovo.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import me.cuiyijie.joyeasharelenovo.config.Constants;
 import me.cuiyijie.joyeasharelenovo.model.RedirectPath;
+import me.cuiyijie.joyeasharelenovo.model.v3.PreviewResponse;
 import me.cuiyijie.joyeasharelenovo.service.OpenApiV3Service;
 import me.cuiyijie.joyeasharelenovo.service.RedirectPathService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +36,15 @@ public class ApiController {
     @ResponseBody
     @RequestMapping("preview")
     public String getFilePreviewUrl(@RequestParam(required = true) String neid,
-                                    @RequestParam(required = false, defaultValue = "745477") String nsid) {
-        return openApiV3Service.getFilePreviewUrl(neid, nsid);
+                                    @RequestParam(required = false, defaultValue = "false") boolean thumbtail) {
+        return openApiV3Service.getFilePreviewUrl(neid, Constants.DEFAULT_PATH_NSID, thumbtail);
+    }
+
+    @RequestMapping("imagePreview")
+    public String imagePreview(@RequestParam(required = true) String neid,
+                                    @RequestParam(required = false, defaultValue = "false") boolean thumbtail) {
+        String previewResponse = openApiV3Service.getFilePreviewUrl(neid, Constants.DEFAULT_PATH_NSID, thumbtail);
+        return String.format("redirect:%s",previewResponse);
     }
 
     @ResponseBody

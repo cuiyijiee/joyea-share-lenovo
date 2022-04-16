@@ -1,5 +1,6 @@
 package me.cuiyijie.joyeasharelenovo.service;
 
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import me.cuiyijie.joyeasharelenovo.model.v3.FileInfoResponse;
 import me.cuiyijie.joyeasharelenovo.model.v3.FileListResponse;
@@ -14,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
+
 
 @Slf4j
 @Service
@@ -32,10 +34,12 @@ public class OpenApiV3Service {
     private final static String TOKEN_URL = "https://api.zbox.filez.com/v3/oauth/token";
     private final static String PREVIEW_URL = "https://api.zbox.filez.com/v3/api/preview/";
     private final static String FILE_LIST_URL = "https://api.zbox.filez.com/v3/api/file";
+    private final static String FILE_PREVIEW_URL = "https://api.zbox.filez.com/v3/api/preview/{neid}?nsid={nsid}&thumbtail={thumbtail}&width={width}&height={height}";
 
     private String accessToken;
     private Long expiresAt;
 
+    @Synchronized
     public String getAccessToken() {
         if (accessToken == null || expiresAt == null || System.currentTimeMillis() > expiresAt) {
             HttpHeaders headers = new HttpHeaders();
@@ -49,17 +53,17 @@ public class OpenApiV3Service {
             ResponseEntity<TokenResponse> response = restTemplate.postForEntity(TOKEN_URL, param, TokenResponse.class);
             TokenResponse tokenResponse = response.getBody();
             accessToken = tokenResponse.getAccessToken();
-            log.info("获取到token：{}",accessToken);
-            expiresAt = System.currentTimeMillis() + tokenResponse.getExpiresIn();
+            log.info("刷新到联想网盘v3接口access：{}", accessToken);
+            expiresAt = System.currentTimeMillis() + tokenResponse.getExpiresIn() * 1000;
             return accessToken;
         }
         return accessToken;
     }
 
-    public String getFilePreviewUrl(String neid, String nsid) {
+    public String getFilePreviewUrl(String neid, String nsid, Boolean thumbtail) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("bearer %s", getAccessToken()));
-        String requestUrl = String.format("%s%s?nsid=%s", PREVIEW_URL, neid, nsid);
+        String requestUrl = String.format("%s%s?nsid=%s&thumbtail=%s&width=300&height=300", PREVIEW_URL, neid, nsid, thumbtail);
         HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
         ResponseEntity<PreviewResponse> response = restTemplate.exchange(requestUrl, HttpMethod.GET, requestEntity, PreviewResponse.class);
         PreviewResponse previewResponse = response.getBody();
@@ -78,7 +82,7 @@ public class OpenApiV3Service {
         return response.getBody();
     }
 
-    public FileInfoResponse getFileInfo(String neid,String nsid) {
+    public FileInfoResponse getFileInfo(String neid, String nsid) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("bearer %s", getAccessToken()));
         String requestUrl = String.format("%s/%s?nsid=%s", FILE_LIST_URL, neid, nsid);
@@ -86,5 +90,4 @@ public class OpenApiV3Service {
         ResponseEntity<FileInfoResponse> response = restTemplate.exchange(requestUrl, HttpMethod.GET, requestEntity, FileInfoResponse.class);
         return response.getBody();
     }
-
 }

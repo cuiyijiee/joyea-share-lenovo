@@ -12,11 +12,10 @@ import java.util.List;
 @Data
 public class FileMetadataResponse {
 
-
     @JsonProperty("prefix_neid")
     private String prefixNeid;
     @JsonProperty("acctid")
-    private Integer acctid;
+    private Long acctid;
     @JsonProperty("from_name")
     private String fromName;
     @JsonProperty("is_team")
@@ -28,15 +27,15 @@ public class FileMetadataResponse {
     @JsonProperty("path")
     private String path;
     @JsonProperty("nsid")
-    private Integer nsid;
+    private Long nsid;
     @JsonProperty("is_deleted")
     private Boolean isDeleted;
     @JsonProperty("content_size")
-    private Integer contentSize;
+    private Long contentSize;
     @JsonProperty("is_dir")
     private Boolean isDir;
     @JsonProperty("owner_uid")
-    private Integer ownerUid;
+    private Long ownerUid;
     @JsonProperty("is_shared")
     private Boolean isShared;
 
@@ -44,33 +43,35 @@ public class FileMetadataResponse {
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ssZ",timezone = "GMT+8")
     private OffsetDateTime modified;
     @JsonProperty("creator_uid")
-    private Integer creatorUid;
+    private Long creatorUid;
     @JsonProperty("from")
     private String from;
     @JsonProperty("topSort")
-    private Integer topSort;
+    private Long topSort;
     @JsonProperty("owner")
     private String owner;
     @JsonProperty("neid")
     private String neid;
     @JsonProperty("folder_dc_type")
-    private Integer folderDcType;
+    private Long folderDcType;
     @JsonProperty("creator")
     private String creator;
     @JsonProperty("utime")
     private Long utime;
+    @JsonProperty("mime_type")
+    private String mimeType;
     @JsonProperty("file_name")
     private String fileName;
     @JsonProperty("authable")
     private Boolean authable;
     @JsonProperty("region_id")
-    private Integer regionId;
+    private Long regionId;
     @JsonProperty("total_size")
-    private Integer totalSize;
+    private Long totalSize;
     @JsonProperty("path_type")
     private String pathType;
     @JsonProperty("access_mode")
-    private Integer accessMode;
+    private Long accessMode;
     @JsonProperty("modifiedUTime")
     private Long modifiedUTime;
     @JsonProperty("delivery_code")
@@ -78,9 +79,9 @@ public class FileMetadataResponse {
     @JsonProperty("size")
     private String size;
     @JsonProperty("updator_uid")
-    private Integer updatorUid;
+    private Long updatorUid;
     @JsonProperty("bytes")
-    private Integer bytes;
+    private Long bytes;
     @JsonProperty("updator")
     private String updator;
     @JsonProperty("share_to_personal")
@@ -88,7 +89,7 @@ public class FileMetadataResponse {
     @JsonProperty("hash")
     private String hash;
     @JsonProperty("access_restriction")
-    private Integer accessRestriction;
+    private Long accessRestriction;
     @JsonProperty("desc")
     private String desc;
     @JsonProperty("createUTime")
@@ -97,7 +98,7 @@ public class FileMetadataResponse {
     private List<FileExtraMetaResponse.ContentDTO.TagsDTO> tags;
 
     @JsonProperty("download_num")
-    private Integer downloadNum;
+    private Long downloadNum;
     @JsonProperty("ref_num")
-    private Integer refNum;
+    private Long refNum;
 }

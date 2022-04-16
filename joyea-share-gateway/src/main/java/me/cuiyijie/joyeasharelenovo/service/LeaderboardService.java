@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,7 +45,7 @@ public class LeaderboardService {
 
     }
 
-    public Integer findFileDownloadNum(String neid) {
-        return Integer.parseInt((String) Optional.ofNullable(redisTemplate.opsForHash().get(Constants.KEY_FILE_DOWNLOAD_RANK, neid)).orElse("0"));
+    public Long findFileDownloadNum(String neid) {
+        return Long.parseLong((String) Optional.ofNullable(redisTemplate.opsForHash().get(Constants.KEY_FILE_DOWNLOAD_RANK, neid)).orElse("0"));
     }
 }
