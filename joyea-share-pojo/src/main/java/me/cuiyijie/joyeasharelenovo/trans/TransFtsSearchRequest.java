@@ -1,4 +1,4 @@
-package me.cuiyijie.trans;
+package me.cuiyijie.joyeasharelenovo.trans;
 
 import lombok.Data;
 

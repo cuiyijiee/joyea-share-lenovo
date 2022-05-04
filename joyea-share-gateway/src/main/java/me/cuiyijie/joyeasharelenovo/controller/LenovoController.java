@@ -4,16 +4,15 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import me.cuiyijie.joyeasharelenovo.config.Constants;
 import me.cuiyijie.joyeasharelenovo.model.DirWord;
+import me.cuiyijie.joyeasharelenovo.enums.DirectoryType;
+import me.cuiyijie.joyeasharelenovo.model.JoyeaUser;
 import me.cuiyijie.joyeasharelenovo.model.v2.FtsSearchResultResponse;
-import me.cuiyijie.trans.TransFileMetadataRequest;
+import me.cuiyijie.joyeasharelenovo.trans.TransFileMetadataRequest;
 import me.cuiyijie.joyeasharelenovo.model.v2.FileExtraMetaResponse;
 import me.cuiyijie.joyeasharelenovo.model.v2.FileMetadataResponse;
-import me.cuiyijie.joyeasharelenovo.service.AlbumSrcService;
-import me.cuiyijie.joyeasharelenovo.service.DirWordService;
-import me.cuiyijie.joyeasharelenovo.service.LeaderboardService;
-import me.cuiyijie.joyeasharelenovo.service.OpenApiV2Service;
-import me.cuiyijie.trans.TransBaseResponse;
-import me.cuiyijie.trans.TransFtsSearchRequest;
+import me.cuiyijie.joyeasharelenovo.service.*;
+import me.cuiyijie.joyeasharelenovo.trans.TransBaseResponse;
+import me.cuiyijie.joyeasharelenovo.trans.TransFtsSearchRequest;
 import me.cuiyijie.util.CheckParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,10 +36,11 @@ public class LenovoController {
     private AlbumSrcService albumSrcService;
     @Autowired
     private DirWordService dirWordService;
-
+    @Autowired
+    private SysDirectoryService sysDirectoryService;
     @RequestMapping(value = "fileMetadata", method = RequestMethod.POST)
     public TransBaseResponse getFileMetadata(@RequestBody TransFileMetadataRequest request) {
-        List<String> paramsCheck = Lists.newArrayList("path:文件路径（path）");
+        List<String> paramsCheck = Lists.newArrayList("directoryType:目录类型（directoryType）","path:目录路径（path）");
         String errorMsg = CheckParamsUtil.checkAll(request, paramsCheck, null, null);
         if (errorMsg != null) {
             log.error("参数检查错误：" + errorMsg);
@@ -49,7 +49,12 @@ public class LenovoController {
             transBaseResponse.setMsg(errorMsg);
             return transBaseResponse;
         }
-        FileMetadataResponse fileMetadataResponse = openApiV2Service.getFileMetadata(request.getPath());
+        FileMetadataResponse fileMetadataResponse = null;
+        if(request.getDirectoryType() == DirectoryType.LENOVO) {
+            fileMetadataResponse = openApiV2Service.getFileMetadata(request.getPath());
+        }else{
+            fileMetadataResponse = sysDirectoryService.getFileMetadata(request.getPath());
+        }
         if (fileMetadataResponse.getContent() != null) {
             //获取每一个文件tag
             List<String> neids = fileMetadataResponse.getContent().stream().map(FileMetadataResponse::getNeid).collect(Collectors.toList());
@@ -60,16 +65,13 @@ public class LenovoController {
             for (int index = 0; index < fileMetadataResponse.getContent().size(); index++) {
                 FileMetadataResponse fileMetadata = fileMetadataResponse.getContent().get(index);
                 fileMetadata.setTags(tagMap.get(fileMetadata.getNeid()));
-            }
 
-
-            for (int index = 0; index < fileExtraMetaResponse.getContent().size(); index++) {
-                //获取被下载次数
-                FileMetadataResponse fileMetadata = fileMetadataResponse.getContent().get(index);
-                fileMetadata.setDownloadNum(leaderboardService.findFileDownloadNum(fileMetadata.getNeid()));
-
-                //获取被索引次数
-                fileMetadata.setRefNum(albumSrcService.countByNeid(fileMetadata.getNeid()));
+                if(!fileMetadata.getIsDir()) {
+                    //获取被下载次数
+                    fileMetadata.setDownloadNum(leaderboardService.findFileDownloadNum(fileMetadata.getNeid()));
+                    //获取被索引次数
+                    fileMetadata.setRefNum(albumSrcService.countByNeid(fileMetadata.getNeid()));
+                }
             }
 
             //添加小白板
@@ -78,6 +80,7 @@ public class LenovoController {
                 FileMetadataResponse dirWordMeta = new FileMetadataResponse();
                 dirWordMeta.setNeid(dirWord.getWordId());
                 dirWordMeta.setPath(dirWord.getWordName());
+                dirWordMeta.setFileName(dirWord.getWordName());
                 dirWordMeta.setMimeType("word");
                 fileMetadataResponse.getContent().add(dirWordMeta);
             }

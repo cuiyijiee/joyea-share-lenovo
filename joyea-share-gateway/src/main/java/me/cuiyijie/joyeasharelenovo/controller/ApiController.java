@@ -2,6 +2,7 @@ package me.cuiyijie.joyeasharelenovo.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.cuiyijie.joyeasharelenovo.config.Constants;
+import me.cuiyijie.joyeasharelenovo.enums.DirectoryType;
 import me.cuiyijie.joyeasharelenovo.model.RedirectPath;
 import me.cuiyijie.joyeasharelenovo.model.v3.PreviewResponse;
 import me.cuiyijie.joyeasharelenovo.service.OpenApiV3Service;
@@ -42,15 +43,16 @@ public class ApiController {
 
     @RequestMapping("imagePreview")
     public String imagePreview(@RequestParam(required = true) String neid,
-                                    @RequestParam(required = false, defaultValue = "false") boolean thumbtail) {
+                               @RequestParam(required = false, defaultValue = "false") boolean thumbtail) {
         String previewResponse = openApiV3Service.getFilePreviewUrl(neid, Constants.DEFAULT_PATH_NSID, thumbtail);
-        return String.format("redirect:%s",previewResponse);
+        return String.format("redirect:%s", previewResponse);
     }
 
     @ResponseBody
     @RequestMapping("addRedirectPath")
-    public RedirectPath addRedirectPath(@RequestParam(required = true) String path) {
-        RedirectPath redirectPath = redirectPathService.addNewRedirectPath(path);
+    public RedirectPath addRedirectPath(@RequestParam(required = true) String path,
+                                        @RequestParam(required = false, defaultValue = "LENOVO") DirectoryType type) {
+        RedirectPath redirectPath = redirectPathService.addNewRedirectPath(path, type);
         return redirectPath;
     }
 
@@ -64,15 +66,19 @@ public class ApiController {
 
         RedirectPath redirectPath = redirectPathService.queryPathById(id);
         if (device.isMobile()) {
-            return String.format("redirect:http://%s:%s/mobile/#redirect?path=%s",
+            return String.format("redirect:http://%s:%s/mobile/#redirect?path=%s&type=%s",
                     serverName,
                     serverPort,
-                    URLEncoder.encode(redirectPath.getPath()));
+                    URLEncoder.encode(redirectPath.getPath()),
+                    redirectPath.getDirectoryType().getValue()
+            );
         } else {
-            return String.format("redirect:http://%s:%s/#redirect?path=%s",
+            return String.format("redirect:http://%s:%s/#redirect?path=%s&type=%s",
                     serverName,
                     serverPort,
-                    URLEncoder.encode(redirectPath.getPath()));
+                    URLEncoder.encode(redirectPath.getPath()),
+                    redirectPath.getDirectoryType().getValue()
+            );
         }
     }
 }

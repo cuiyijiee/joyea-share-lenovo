@@ -5,13 +5,13 @@ import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import me.cuiyijie.joyeasharelenovo.config.Constants;
 import me.cuiyijie.joyeasharelenovo.enums.TranscodeVideoStatus;
-import me.cuiyijie.joyeasharelenovo.model.SrcDirectory;
+import me.cuiyijie.joyeasharelenovo.model.SysDirectory;
 import me.cuiyijie.joyeasharelenovo.model.TranscodeVideo;
-import me.cuiyijie.joyeasharelenovo.model.enums.DirectoryType;
+import me.cuiyijie.joyeasharelenovo.enums.DirectoryType;
 import me.cuiyijie.joyeasharelenovo.model.v2.FileMetadataResponse;
 import me.cuiyijie.joyeasharelenovo.service.OpenApiV2Service;
 import me.cuiyijie.joyeasharelenovo.service.OpenApiV3Service;
-import me.cuiyijie.joyeasharelenovo.service.SrcDirService;
+import me.cuiyijie.joyeasharelenovo.service.SysDirectoryService;
 import me.cuiyijie.joyeasharelenovo.service.TranscodeVideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,7 +42,7 @@ public class SampleXxlJob {
     @Autowired
     private OpenApiV2Service openApiV2Service;
     @Autowired
-    private SrcDirService srcDirService;
+    private SysDirectoryService sysDirectoryService;
 
     /**
      * 1、简单任务示例（Bean模式）
@@ -92,46 +92,46 @@ public class SampleXxlJob {
         syncDir("/营销素材展示", null);
     }
 
-    public void syncDir(String initPath, SrcDirectory parentDir) {
+    public void syncDir(String initPath, SysDirectory parentDir) {
         FileMetadataResponse fileMetadataResponse = openApiV2Service.getFileMetadata(initPath);
         if (fileMetadataResponse != null) {
             //遍历完成之后删除不存在的文件夹
-            SrcDirectory existDirectory = srcDirService.findByNeid(fileMetadataResponse.getNeid());
+            SysDirectory existDirectory = sysDirectoryService.findByNeid(fileMetadataResponse.getNeid());
             //如果不存在则新增
             if (existDirectory == null) {
-                SrcDirectory srcDirectory = new SrcDirectory();
-                srcDirectory.setDirName(fileMetadataResponse.getFileName());
-                srcDirectory.setDirType(DirectoryType.LENOVO);
-                srcDirectory.setEnabled(true);
-                srcDirectory.setCreatedAt(LocalDateTime.now());
+                SysDirectory sysDirectory = new SysDirectory();
+                sysDirectory.setDirName(fileMetadataResponse.getFileName());
+                sysDirectory.setDirType(DirectoryType.LENOVO);
+                sysDirectory.setEnabled(true);
+                sysDirectory.setCreatedAt(LocalDateTime.now());
                 if (parentDir != null) {
-                    srcDirectory.setParentDirId(parentDir.getId());
+                    sysDirectory.setParentDirId(parentDir.getId());
                 } else {
-                    srcDirectory.setParentDirId(null);
+                    sysDirectory.setParentDirId(null);
                 }
-                srcDirectory.setNeid(fileMetadataResponse.getNeid());
-                existDirectory = srcDirService.insertNewDir(srcDirectory);
+                sysDirectory.setNeid(fileMetadataResponse.getNeid());
+                existDirectory = sysDirectoryService.insertNewDir(sysDirectory);
             } else {
                 //更新文件夹名称
                 if (existDirectory.getDirName().equals(fileMetadataResponse.getFileName())) {
-                    srcDirService.updateFileName(existDirectory.getId(), fileMetadataResponse.getFileName());
+                    sysDirectoryService.updateFileName(existDirectory.getId(), fileMetadataResponse.getFileName());
                 }
             }
 
             if (fileMetadataResponse.getContent() != null) {
                 //本地存储的文件夹
-                List<SrcDirectory> existChildDirs = srcDirService.findChildById(existDirectory.getId());
+                List<SysDirectory> existChildDirs = sysDirectoryService.findChildById(existDirectory.getId());
                 //过滤掉网盘不存在的文件夹进行删除
                 List<String> onlineChildNeid = fileMetadataResponse.getContent().stream()
                         .map(FileMetadataResponse::getNeid)
                         .collect(Collectors.toList());
                 List<String> onlineNotExistChildDirId = existChildDirs.stream()
                         .filter(srcDirectory -> !onlineChildNeid.contains(srcDirectory.getNeid()))
-                        .map(SrcDirectory::getId)
+                        .map(SysDirectory::getId)
                         .collect(Collectors.toList());
                 log.info("当前文件夹:{},要删除的文件夹ids: {}",fileMetadataResponse.getFileName(),onlineNotExistChildDirId);
                 if (onlineNotExistChildDirId.size() > 0) {
-                    srcDirService.deleteByIds(onlineNotExistChildDirId);
+                    sysDirectoryService.deleteByIds(onlineNotExistChildDirId);
                 }
 
                 for (int index = 0; index < fileMetadataResponse.getContent().size(); index++) {

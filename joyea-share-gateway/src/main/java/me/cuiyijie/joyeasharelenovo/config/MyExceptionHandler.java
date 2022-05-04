@@ -1,6 +1,7 @@
 package me.cuiyijie.joyeasharelenovo.config;
 
 import lombok.extern.slf4j.Slf4j;
+import me.cuiyijie.exception.SysRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,13 @@ public class MyExceptionHandler {
     public Object errorHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
         log.error("全局捕捉到异常：", exception);
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("code", "0");
-        map.put("msg", String.format("发生未知错误：%s", exception.getMessage()));
+        if (exception instanceof SysRuntimeException) {
+            map.put("code", "-1");
+            map.put("msg", exception.getMessage());
+        } else {
+            map.put("code", "-1");
+            map.put("msg", String.format("发生未知错误：%s", exception.getMessage()));
+        }
         return map;
     }
 }

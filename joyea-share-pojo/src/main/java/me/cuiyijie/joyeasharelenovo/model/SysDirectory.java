@@ -3,7 +3,7 @@ package me.cuiyijie.joyeasharelenovo.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
-import me.cuiyijie.joyeasharelenovo.model.enums.DirectoryType;
+import me.cuiyijie.joyeasharelenovo.enums.DirectoryType;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @date 2022/4/16 18:20
  */
 @Data
-public class SrcDirectory {
+public class SysDirectory {
 
     @TableId(value = "ID", type = IdType.ID_WORKER_STR)
     private String id;
@@ -25,6 +25,7 @@ public class SrcDirectory {
     private String parentDirId;
     //文件夹类型
     private DirectoryType dirType;
+    private String path;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

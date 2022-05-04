@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.cuiyijie.joyeasharelenovo.dao.SysDirectoryAdminDao">
+
+    <select id="listDirectoryAddAdmin" resultType="me.cuiyijie.joyeasharelenovo.model.JoyeaUser">
+        SELECT ju.*
+        FROM sys_directory_admin sda
+                 LEFT JOIN joyea_user ju on sda.joyea_user_id = ju.id
+        WHERE sda.directory_id = #{directoryId}
+          AND sda.enabled = 1
+    </select>
+</mapper>

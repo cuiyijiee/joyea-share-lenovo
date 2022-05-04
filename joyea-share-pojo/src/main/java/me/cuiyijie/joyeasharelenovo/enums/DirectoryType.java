@@ -1,4 +1,4 @@
-package me.cuiyijie.joyeasharelenovo.model.enums;
+package me.cuiyijie.joyeasharelenovo.enums;
 
 /**
  * @author cyj976655@gmail.com
@@ -6,8 +6,8 @@ package me.cuiyijie.joyeasharelenovo.model.enums;
  */
 public enum DirectoryType {
 
-    SELF(1, "自己"),
-    LENOVO(1, "联想晚盘");
+    SELF(1, "私有目录"),
+    LENOVO(1, "联想网盘");
 
     public Integer getKey() {
         return key;
