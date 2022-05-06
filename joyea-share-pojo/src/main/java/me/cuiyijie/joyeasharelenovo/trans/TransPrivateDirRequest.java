@@ -11,6 +11,7 @@ public class TransPrivateDirRequest {
 
     private String parentDirId;
     private String srcPath;
+    private List<String> srcPaths;
 
     private String dirId;
     private String newDirName;

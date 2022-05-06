@@ -51,8 +51,8 @@ public class ApiController {
     @ResponseBody
     @RequestMapping("addRedirectPath")
     public RedirectPath addRedirectPath(@RequestParam(required = true) String path,
-                                        @RequestParam(required = false, defaultValue = "LENOVO") DirectoryType type) {
-        RedirectPath redirectPath = redirectPathService.addNewRedirectPath(path, type);
+                                        @RequestParam(required = false, defaultValue = "LENOVO") String type) {
+        RedirectPath redirectPath = redirectPathService.addNewRedirectPath(path, DirectoryType.valueOf(type));
         return redirectPath;
     }
 
@@ -70,14 +70,14 @@ public class ApiController {
                     serverName,
                     serverPort,
                     URLEncoder.encode(redirectPath.getPath()),
-                    redirectPath.getDirectoryType().getValue()
+                    URLEncoder.encode(redirectPath.getDirectoryType().toString())
             );
         } else {
             return String.format("redirect:http://%s:%s/#redirect?path=%s&type=%s",
                     serverName,
                     serverPort,
                     URLEncoder.encode(redirectPath.getPath()),
-                    redirectPath.getDirectoryType().getValue()
+                    URLEncoder.encode(redirectPath.getDirectoryType().toString())
             );
         }
     }

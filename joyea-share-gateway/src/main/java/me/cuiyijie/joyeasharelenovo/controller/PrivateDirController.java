@@ -86,6 +86,21 @@ public class PrivateDirController {
         return TransBaseResponse.success(sysSrcService.newSrc(request.getParentDirId(), request.getSrcPath()));
     }
 
+    @RequestMapping(path = "batchNewSrc", method = RequestMethod.POST)
+    public TransBaseResponse batchNewSrc(@RequestBody TransPrivateDirRequest request) {
+        TransBaseResponse transBaseResponse = new TransBaseResponse();
+        List<String> paramsCheck = Lists.newArrayList("srcPaths:文件路径列表(srcPaths)");
+        String errorMsg = CheckParamsUtil.checkAll(request, paramsCheck, null, null);
+        if (errorMsg != null) {
+            log.error("参数检查错误：" + errorMsg);
+            transBaseResponse.setCode("-1");
+            transBaseResponse.setMsg(errorMsg);
+            return transBaseResponse;
+        }
+        sysSrcService.batchNewSrc(request.getParentDirId(), request.getSrcPaths());
+        return TransBaseResponse.success();
+    }
+
     @RequestMapping(path = "removeSrc", method = RequestMethod.POST)
     public TransBaseResponse removePrivateSrc(@RequestBody TransPrivateDirRequest request) {
         TransBaseResponse transBaseResponse = new TransBaseResponse();

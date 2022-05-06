@@ -166,7 +166,7 @@ public class SysDirectoryService {
         }
         String toDeletePrefix = existDirectory.getPath() + "/";
         sysDirectoryDao.deleteById(dirId);
-        sysDirectoryDao.delete(new QueryWrapper<SysDirectory>().likeLeft("path",toDeletePrefix));
+        sysDirectoryDao.delete(new QueryWrapper<SysDirectory>().likeRight("path",toDeletePrefix));
     }
 
     @Transactional
@@ -203,7 +203,12 @@ public class SysDirectoryService {
         List<SysDirectory> parentDirs = findParentDir(sysDirectory);
         List<String> parentDirNames = parentDirs.stream().map(SysDirectory::getDirName).collect(Collectors.toList());
         parentDirNames = Lists.reverse(parentDirNames);
-        return String.join("/", parentDirNames) + "/";
+        String resultPrefix = String.join("/", parentDirNames) + "/";
+        if (resultPrefix.startsWith("//")) {
+            return resultPrefix.substring(1);
+        }else{
+            return resultPrefix;
+        }
     }
 
     private List<SysDirectory> findParentDir(SysDirectory sysDirectory) {
