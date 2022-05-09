@@ -20,6 +20,7 @@ public class SysSrc {
     @JsonProperty("file_name")
     private String fileName;
     private Long bytes;
+    private String alias;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private boolean enabled;

@@ -18,4 +18,6 @@ public class TransPrivateDirRequest {
 
     private List<String> admins;
 
+    private String alias;
+
 }

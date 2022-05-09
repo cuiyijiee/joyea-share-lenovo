@@ -4,10 +4,10 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import me.cuiyijie.joyeasharelenovo.model.SysDirectory;
 import me.cuiyijie.joyeasharelenovo.service.SysDirectoryAdminService;
-import me.cuiyijie.joyeasharelenovo.trans.TransPrivateDirRequest;
 import me.cuiyijie.joyeasharelenovo.service.SysDirectoryService;
-import me.cuiyijie.joyeasharelenovo.trans.TransBaseResponse;
 import me.cuiyijie.joyeasharelenovo.service.SysSrcService;
+import me.cuiyijie.joyeasharelenovo.trans.TransBaseResponse;
+import me.cuiyijie.joyeasharelenovo.trans.TransPrivateDirRequest;
 import me.cuiyijie.util.CheckParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -86,6 +86,21 @@ public class PrivateDirController {
         return TransBaseResponse.success(sysSrcService.newSrc(request.getParentDirId(), request.getSrcPath()));
     }
 
+    @RequestMapping(path = "updateAlias")
+    public TransBaseResponse updateAlias(@RequestBody TransPrivateDirRequest request) {
+        TransBaseResponse transBaseResponse = new TransBaseResponse();
+        List<String> paramsCheck = Lists.newArrayList("parentDirId:父文件夹id(parentDirId)", "neid:文件id(neid)", "alias:别名(alias)");
+        String errorMsg = CheckParamsUtil.checkAll(request, paramsCheck, null, null);
+        if (errorMsg != null) {
+            log.error("参数检查错误：" + errorMsg);
+            transBaseResponse.setCode("-1");
+            transBaseResponse.setMsg(errorMsg);
+            return transBaseResponse;
+        }
+        sysSrcService.updateAlias(request.getParentDirId(), request.getNeid(), request.getAlias());
+        return TransBaseResponse.success();
+    }
+
     @RequestMapping(path = "batchNewSrc", method = RequestMethod.POST)
     public TransBaseResponse batchNewSrc(@RequestBody TransPrivateDirRequest request) {
         TransBaseResponse transBaseResponse = new TransBaseResponse();
@@ -104,7 +119,7 @@ public class PrivateDirController {
     @RequestMapping(path = "removeSrc", method = RequestMethod.POST)
     public TransBaseResponse removePrivateSrc(@RequestBody TransPrivateDirRequest request) {
         TransBaseResponse transBaseResponse = new TransBaseResponse();
-        List<String> paramsCheck = Lists.newArrayList("parentDirId:父文件夹id(parentDirId)","neid:文件id(neid)");
+        List<String> paramsCheck = Lists.newArrayList("parentDirId:父文件夹id(parentDirId)", "neid:文件id(neid)");
         String errorMsg = CheckParamsUtil.checkAll(request, paramsCheck, null, null);
         if (errorMsg != null) {
             log.error("参数检查错误：" + errorMsg);
@@ -112,7 +127,7 @@ public class PrivateDirController {
             transBaseResponse.setMsg(errorMsg);
             return transBaseResponse;
         }
-        sysSrcService.removeSrc(request.getParentDirId(),request.getNeid());
+        sysSrcService.removeSrc(request.getParentDirId(), request.getNeid());
         return TransBaseResponse.success();
     }
 

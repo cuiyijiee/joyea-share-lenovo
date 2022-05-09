@@ -150,7 +150,7 @@ public class SysDirectoryService {
             childFileMeta.setIsDir(false);
             childFileMeta.setNeid(sysSrc.getNeid());
             childFileMeta.setMimeType(sysSrc.getMimeType());
-            childFileMeta.setFileName(sysSrc.getFileName());
+            childFileMeta.setFileName(StringUtils.defaultIfBlank(sysSrc.getAlias(),sysSrc.getFileName()));
             childFileMeta.setBytes(sysSrc.getBytes());
             childFileMetas.add(childFileMeta);
         }

@@ -21,12 +21,19 @@ public class SysSrcService {
     @Autowired
     private SysSrcDao sysSrcDao;
     @Autowired
-    private SysDirectoryDao sysDirectoryDao;
-    @Autowired
     private OpenApiV2Service openApiV2Service;
 
     public void removeSrc(String parDirId, String neid) {
         sysSrcDao.delete(new QueryWrapper<SysSrc>().eq("parent_dir_id", parDirId).eq("neid", neid));
+    }
+
+    public void updateAlias(String parentDirId,String neid,String alias){
+        SysSrc sysSrc = new SysSrc();
+        sysSrc.setAlias(alias);
+        sysSrcDao.update(sysSrc,new QueryWrapper<SysSrc>()
+                .eq("parent_dir_id",parentDirId)
+                .eq("neid",neid)
+        );
     }
 
     public SysSrc newSrc(String parentDirId, String srcFilePath) {
@@ -35,7 +42,9 @@ public class SysSrcService {
             throw new SysRuntimeException("待添加文件不存在");
         }
 
-        SysSrc existSrc = sysSrcDao.selectOne(new QueryWrapper<SysSrc>().eq("neid", fileMetadataResponse.getNeid()).eq("parent_dir_id", parentDirId));
+        SysSrc existSrc = sysSrcDao.selectOne(new QueryWrapper<SysSrc>()
+                .eq("neid", fileMetadataResponse.getNeid())
+                .eq("parent_dir_id", parentDirId));
         if (existSrc != null) {
             throw new SysRuntimeException("该文件夹下已经存在该文件！");
         }
