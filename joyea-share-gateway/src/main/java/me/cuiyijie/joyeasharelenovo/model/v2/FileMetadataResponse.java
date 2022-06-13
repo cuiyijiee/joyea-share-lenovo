@@ -97,8 +97,8 @@ public class FileMetadataResponse {
 //    private String hash;
 //    @JsonProperty("access_restriction")
 //    private Long accessRestriction;
-//    @JsonProperty("desc")
-//    private String desc;
+    @JsonProperty("desc")
+    private String desc;
 //    @JsonProperty("createUTime")
 //    private Long createUTime;
 

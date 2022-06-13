@@ -74,6 +74,9 @@ public class LenovoController {
                 }
             }
 
+            //对目录进行排序，对文件名称进行默认排序
+            fileMetadataResponse.getContent().sort(Comparator.comparing(FileMetadataResponse::getFileName));
+
             //添加小白板
             List<DirWord> dirWords = dirWordService.findByNeid(fileMetadataResponse.getNeid());
             for (DirWord dirWord : dirWords) {
@@ -82,11 +85,8 @@ public class LenovoController {
                 dirWordMeta.setPath(dirWord.getWordName());
                 dirWordMeta.setFileName(dirWord.getWordName());
                 dirWordMeta.setMimeType("word");
-                fileMetadataResponse.getContent().add(dirWordMeta);
+                fileMetadataResponse.getContent().add(0, dirWordMeta);
             }
-
-            //对目录进行排序，对文件名称进行默认排序
-            fileMetadataResponse.getContent().sort(Comparator.comparing(FileMetadataResponse::getFileName));
         }
         return TransBaseResponse.success(fileMetadataResponse);
     }
