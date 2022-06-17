@@ -73,6 +73,7 @@ public class TranscodeVideoService {
         TranscodeVideo transcodeVideo = new TranscodeVideo();
         transcodeVideo.setTransVideoUrl(previewUrl);
         transcodeVideo.setUpdatedAt(LocalDateTime.now());
+        transcodeVideo.setStatus(TranscodeVideoStatus.LOADED);
         transcodeVideoDao.update(transcodeVideo, new QueryWrapper<TranscodeVideo>().eq("id", id));
     }
 

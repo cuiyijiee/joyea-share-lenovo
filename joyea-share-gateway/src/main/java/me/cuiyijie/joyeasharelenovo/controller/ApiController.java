@@ -1,5 +1,6 @@
 package me.cuiyijie.joyeasharelenovo.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import me.cuiyijie.joyeasharelenovo.config.Constants;
 import me.cuiyijie.joyeasharelenovo.enums.DirectoryType;
@@ -30,6 +31,7 @@ public class ApiController {
 
     @ResponseBody
     @RequestMapping("token")
+    @ApiOperation(value = "获取V3接口token", httpMethod = "GET")
     public String getToken() {
         return openApiV3Service.getAccessToken();
     }

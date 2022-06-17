@@ -71,6 +71,7 @@ public class SampleXxlJob {
     public void refreshNewVideoJob() {
         XxlJobHelper.log("1.start update transcode task;");
         List<TranscodeVideo> allVideo = transcodeVideoService.getAllTranscodeVideo(TranscodeVideoStatus.NEW);
+
         XxlJobHelper.log("2.got transcode video count: " + allVideo.size());
         for (int index = 0; index < allVideo.size(); index++) {
             TranscodeVideo transcodeVideo = allVideo.get(index);

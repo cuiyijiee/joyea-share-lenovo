@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import me.cuiyijie.joyeasharelenovo.enums.TranscodeVideoStatus;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Data
 public class TranscodeVideo {
 
-    @TableId(value = "ID", type = IdType.ID_WORKER_STR)
+    @TableId(value = "ID", type = IdType.ASSIGN_ID)
     private String id;
 
     private String neid;
@@ -36,5 +37,8 @@ public class TranscodeVideo {
 
     @TableField(value = "last_use_at")
     private LocalDateTime lastUseAt;
+
+    @TableField(value = "status")
+    private TranscodeVideoStatus status;
 
 }

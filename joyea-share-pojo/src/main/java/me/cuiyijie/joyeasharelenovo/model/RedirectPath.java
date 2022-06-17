@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class RedirectPath {
 
 
-    @TableId(value = "ID", type = IdType.ID_WORKER_STR)
+    @TableId(value = "ID", type = IdType.ASSIGN_ID)
     private String id;
 
     @TableField("path")

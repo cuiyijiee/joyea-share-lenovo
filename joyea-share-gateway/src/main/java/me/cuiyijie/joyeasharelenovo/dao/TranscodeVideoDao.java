@@ -1,6 +1,5 @@
 package me.cuiyijie.joyeasharelenovo.dao;
 
-import com.baomidou.mybatisplus.annotation.SqlParser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import me.cuiyijie.joyeasharelenovo.model.TranscodeVideo;
 import org.apache.ibatis.annotations.Param;
