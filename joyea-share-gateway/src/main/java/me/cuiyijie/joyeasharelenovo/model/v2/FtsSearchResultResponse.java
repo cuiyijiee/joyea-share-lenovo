@@ -34,6 +34,8 @@ public class FtsSearchResultResponse {
         private Long fileindex;
         @JsonProperty("acctid")
         private Long acctid;
+        @JsonProperty("desc")
+        private String desc;
         @JsonProperty("from_name")
         private String fromName;
         @JsonProperty("result")

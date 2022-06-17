@@ -45,9 +45,9 @@ class JoyeaShareLenovoApplicationTests {
     @Test
     void contextLoads() {
 
-        sysDirectoryAdminService.updateDirectoryAdmins("123", Lists.newArrayList("584","585"));
-        List<JoyeaUser> joyeaUsers = sysDirectoryAdminService.listDirectoryAdmin("123");
-        System.out.println(joyeaUsers);
+//        sysDirectoryAdminService.updateDirectoryAdmins("123", Lists.newArrayList("584","585"));
+//        List<JoyeaUser> joyeaUsers = sysDirectoryAdminService.listDirectoryAdmin("123");
+//        System.out.println(joyeaUsers);
 
         //sysDirectoryDao.updateDirectoryPrefix("/测试数据1/","/测试目录/");
         //sysSrcService.newSrc("","/营销素材展示/STICK线/001、样品照片/002、保健品样品照片/001、保健品-颗粒剂/001、生合生物（益生菌固体饮料）/生合生物-益生菌固体饮料20161207.jpg");
